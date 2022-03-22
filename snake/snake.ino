@@ -184,7 +184,7 @@ void resetMatrix(void)
   mx.clear();
 }
 
-void decide() {
+void updateSnake() {
 
   //follow hamiltonian (reverse order)
   int moveto_hamilt = head->pos_hamilt-1;
@@ -235,12 +235,13 @@ void loop(void)
   Serial.print(head->next->pos_i);
   if(head->next->next == nullptr)
     Serial.print("only2|");
-  Serial.print(moveto_hamilt);
+//  Serial.print(moveto_hamilt);
   Serial.print("|");
   Serial.print(head->pos_hamilt);
   Serial.println();
   #endif
 
+  updateSnake();
   
   resetMap();
   drawSnake();
