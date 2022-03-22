@@ -1,4 +1,3 @@
- 
 #include <MD_MAX72xx.h>
 #include <SPI.h>
 #define DEBUG 1   // Enable or disable (default) debugging output
@@ -178,15 +177,23 @@ void draw() {
 }
 
 
-
-
-// ========== Control routines ===========
-//
 void resetMatrix(void)
 {
   mx.control(MD_MAX72XX::INTENSITY, MAX_INTENSITY/2);
   mx.control(MD_MAX72XX::UPDATE, MD_MAX72XX::ON);
   mx.clear();
+}
+
+void decide() {
+
+  //follow hamiltonian (reverse order)
+  int moveto_hamilt = head->pos_hamilt-1;
+  if(moveto_hamilt<0)moveto_hamilt = 63;
+  int moveto_i = flatten_hamiltonian[moveto_hamilt][0];
+  int moveto_j = flatten_hamiltonian[moveto_hamilt][1];
+  int di = (moveto_i-head->pos_i);
+  int dj = (moveto_j-head->pos_j);
+  moveSnake(di,dj);
 }
 
 void setup()
@@ -220,12 +227,7 @@ void loop(void)
   
 //  moveSnake(1,0);
   //follow hamiltonian (reverse order)
-  int moveto_hamilt = head->pos_hamilt-1;
-  if(moveto_hamilt<0)moveto_hamilt = 63;
-  int moveto_i = flatten_hamiltonian[moveto_hamilt][0];
-  int moveto_j = flatten_hamiltonian[moveto_hamilt][1];
-  int di = (moveto_i-head->pos_i);
-  int dj = (moveto_j-head->pos_j);
+
 
   #if DEBUG
   Serial.print(head->pos_i);
@@ -238,8 +240,6 @@ void loop(void)
   Serial.print(head->pos_hamilt);
   Serial.println();
   #endif
-  
-  moveSnake(di,dj);
 
   
   resetMap();
@@ -247,7 +247,7 @@ void loop(void)
   drawFood();
   resetMatrix();
   draw();
-  delay(200);
+  delay(100);
   //for(int i=0;i<8;i++)
   //  for(int j=0;j<8;j++)
   //  {
