@@ -160,9 +160,10 @@ void moveSnake(int di, int dj){
     newhead->pos_j = newpos_j;
     newhead->next = head;
     head = newhead;
+    int foodbefore = food;
     do{
       food = random(64);
-    }while(gamemap[flatten_hamiltonian[food][0]][flatten_hamiltonian[food][1]] == 1);
+    }while(gamemap[flatten_hamiltonian[food][0]][flatten_hamiltonian[food][1]] == 1 || food == foodbefore);
     return;
   } 
   updateBodiesPosition(head,head->pos_i+di,head->pos_j+dj);
@@ -184,11 +185,28 @@ void resetMatrix(void)
   mx.clear();
 }
 
+
+bool visited[64];
+bool visitable(int i, int j) {
+  if(i>=8 &&i<0)
+    return false;
+  if(j>=8 &&j<0)
+    return false;
+}
+
+int shortestPath(int h_pos_p, int h_pos_q) {
+  
+}
+
+int order = -1;
+
 void updateSnake() {
 
+
   //follow hamiltonian (reverse order)
-  int moveto_hamilt = head->pos_hamilt-1;
+  int moveto_hamilt = head->pos_hamilt+order;
   if(moveto_hamilt<0)moveto_hamilt = 63;
+  if(moveto_hamilt>63)moveto_hamilt = 0;
   int moveto_i = flatten_hamiltonian[moveto_hamilt][0];
   int moveto_j = flatten_hamiltonian[moveto_hamilt][1];
   int di = (moveto_i-head->pos_i);
@@ -196,10 +214,24 @@ void updateSnake() {
   moveSnake(di,dj);
 }
 
+void transposeHamiltonian() {
+  for(int i=0;i<8;i++)
+    for(int j=0;j<8;j++)
+    {
+      int tmp = hamiltonian[i][j];
+      hamiltonian[i][j] = hamiltonian[j][i];
+      hamiltonian[j][i] = tmp;
+    }
+}
+
 void setup()
 {
   randomSeed(analogRead(0));
   resetMap();
+  if(random(64)%2)
+    transposeHamiltonian();
+  if(random(64)%2)
+    order = 1;
   buildFlattenHamiltonian();
   tail = createSnake();
   tail->pos_i = 0;
@@ -246,7 +278,8 @@ void loop(void)
   resetMap();
   drawSnake();
   drawFood();
-  resetMatrix();
+//  resetMatrix();
+  mx.clear();
   draw();
   delay(100);
   //for(int i=0;i<8;i++)
@@ -258,4 +291,6 @@ void loop(void)
   //    delay(200);
   //  }
   //return;
+  if(head==nullptr)
+    setup();
 }
