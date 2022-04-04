@@ -15,15 +15,12 @@ double last_isr_call;
 bool checkBouncing() {
     double tmp = last_isr_call;
     last_isr_call = millis();
-    if (last_isr_call > tmp + 150)
-        return true;
-    return false;
+    return last_isr_call > tmp + 150
 }
 
 void setAllPesertaActive() {
     for(int i=0;i<3;i++)
         peserta[i].is_active = true;
-
 }
 int peserta_idx;
 int answeringcount;
@@ -61,16 +58,17 @@ void loop()
             break;
         case STATE::JUDGING:
             if(digitalRead(J2) == HIGH) {
-                peserta[peserta_idx].score += 1;
+                peserta[peserta_idx].score++;
                 program_state = STATE::GABUT;
                 break;
             }
             if(digitalRead(J3) == HIGH) {
                 answeringcount++;
-                peserta[peserta_idx].score -= 1;
+                peserta[peserta_idx].score--;
                 interrupt_active = true;
-                if(answeringcount < 2)
+                if(answeringcount < 2) {
                     program_state = STATE::STANDBY;
+                }
                 else {
                     program_state = STATE::GABUT;
                 }
