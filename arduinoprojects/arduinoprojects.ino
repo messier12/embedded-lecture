@@ -33,7 +33,7 @@ void decTeam(int team) {
 void incTeam(int team) {
   peserta[team].score += 2;
   if(peserta[team].score >= 100)
-    peserta[team].score=100;
+    peserta[team].score=99;
 }
 
 void drawTeam(int team) {
@@ -163,7 +163,8 @@ void loop()
 //            tm1637.display(2,15); // F
             drawTeam(peserta_idx);
             if(digitalRead(J2) == LOW) { // correct
-                peserta[peserta_idx].score+=2;
+//                peserta[peserta_idx].score+=2;
+                incTeam(peserta_idx);
                 drawTeamWithScore(peserta_idx);
                 delay(1000);
                 program_state = STATE::GABUT;
@@ -171,7 +172,8 @@ void loop()
             }
             if(digitalRead(J3) == LOW) {  //wrong
                 answeringcount++;
-                peserta[peserta_idx].score--;
+//                peserta[peserta_idx].score--;
+                decTeam(peserta_idx);
                 peserta[peserta_idx].is_active=false;
                 drawTeamWithScore(peserta_idx);
                 delay(1000);
